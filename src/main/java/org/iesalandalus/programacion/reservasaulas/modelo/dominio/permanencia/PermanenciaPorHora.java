@@ -43,7 +43,7 @@ public class PermanenciaPorHora extends Permanencia {
     }
     
     public PermanenciaPorHora(PermanenciaPorHora p){
-       super(p);
+       super();
         if(p==null){
             throw new IllegalArgumentException("No se puede copiar una permanencia nula.");
         }
@@ -102,10 +102,10 @@ public class PermanenciaPorHora extends Permanencia {
             return false;
         }
         final PermanenciaPorHora other = (PermanenciaPorHora) obj;
-        if (!Objects.equals(this.hora, other.hora)) {
-            return false;
+        if(Objects.equals(this.hora, other.hora) && Objects.equals(this.dia, other.dia)){
+            return true;
         }
-        return true;
+        return false;
     }
 
     @Override

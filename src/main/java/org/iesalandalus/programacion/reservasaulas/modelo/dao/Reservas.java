@@ -71,7 +71,7 @@ public class Reservas {
             if(reserva.getPermanencia()instanceof PermanenciaPorHora && reserva.getPermanencia() instanceof PermanenciaPorTramo){
                 throw new OperationNotSupportedException("Ya se ha realizado una reserva por hora para este día y aula.");
             }
-            if(reserva.getPermanencia()instanceof PermanenciaPorTramo && reserva.getPermanencia()instanceof PermanenciaPorHora){
+            if(getReservaDia(reserva.getPermanencia().getDia()).getPermanencia()instanceof PermanenciaPorTramo && reserva.getPermanencia()instanceof PermanenciaPorHora){
                 throw new OperationNotSupportedException("Ya se ha realizado una reserva por tramo para este día y aula.");
             }
         }
@@ -92,22 +92,28 @@ public class Reservas {
         this.coleccionReservas.add(reserva);
     }
     
-    private boolean esMesSiguienteOPorsterior (Reserva reserva){
+    private boolean esMesSiguienteOPorsterior (Reserva laReserva){
+        if(laReserva==null){
+            throw new IllegalArgumentException("Sólo se pueden hacer reservas para el mes que viene o posteriores.");
+        }
         LocalDate fecha= LocalDate.now().plusMonths(1);
-        if(reserva.getPermanencia().getDia().isBefore(fecha)){
+        if(laReserva.getPermanencia().getDia().isBefore(fecha)){
             return false;
         }
         return true;
     }
     
     private float getPuntosGastadosReserva(Reserva reserva){
+        if(reserva==null){
+            throw new IllegalArgumentException("Esta reserva excede los puntos máximos por mes para dicho profesor.");
+        }
         return reserva.getPuntos();
     }
     
-    private List<Reserva> getReservasProfesorMes(Profesor profesor, LocalDate dia){
+    private List<Reserva> getReservasProfesorMes(Profesor elProfesor, LocalDate dia){
         List<Reserva> devolver= new ArrayList<Reserva>();
         for(Reserva reserva: coleccionReservas){
-            if(reserva.getProfesor().equals(profesor)&& reserva.getPermanencia().getDia().getMonthValue()==dia.getMonthValue()){
+            if(reserva.getProfesor().equals(elProfesor)&& reserva.getPermanencia().getDia().getMonthValue()==dia.getMonthValue()){
                 devolver.add(reserva);
             }
         }

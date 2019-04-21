@@ -6,6 +6,7 @@
 package org.iesalandalus.programacion.reservasaulas.modelo.dominio.permanencia;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Objects;
 /**
  *
@@ -16,6 +17,10 @@ public abstract class Permanencia {
     protected LocalDate dia;
     protected static final DateTimeFormatter FORMATO_DIA=DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+    
+    protected Permanencia(){ //constructor sin parametros
+        
+    }
     /**
      *
      * @param dia
@@ -35,7 +40,7 @@ public abstract class Permanencia {
         }
         setDia(p.dia);
     }
-    protected Permanencia (String dia){
+    protected Permanencia (String dia) {
         setDia(dia);
     }
 
@@ -57,7 +62,11 @@ public abstract class Permanencia {
         if(dia.equals("")){
             throw new IllegalArgumentException("El día de una permanencia no puede ser vacío");
         }
-        this.dia=LocalDate.parse(dia, FORMATO_DIA);
+        try{
+            this.dia=LocalDate.parse(dia, FORMATO_DIA);
+        }catch(DateTimeParseException e){
+            throw new IllegalArgumentException("El formato del día de la permanencia no es correcto.");
+        }
     }
     //Los metodos de a continuación al ser abstractos no pueden tener cuerpo
     

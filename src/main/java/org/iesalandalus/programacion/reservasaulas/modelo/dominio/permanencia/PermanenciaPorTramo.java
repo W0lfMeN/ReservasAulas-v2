@@ -25,12 +25,13 @@ public class PermanenciaPorTramo extends Permanencia {
         setTramo(tramo);
     }
     
-    public PermanenciaPorTramo(PermanenciaPorTramo p){
+    public PermanenciaPorTramo(PermanenciaPorTramo p) {
+        super();
         if(p==null){
             throw new IllegalArgumentException("No se puede copiar una permanencia nula.");
         }
         setTramo(p.getTramo());
-        setDia(p.getDia());
+        super.setDia(p.getDia());
     }
 
     public Tramo getTramo() {
@@ -66,10 +67,10 @@ public class PermanenciaPorTramo extends Permanencia {
             return false;
         }
         final PermanenciaPorTramo other = (PermanenciaPorTramo) obj;
-        if (this.tramo != other.tramo) {
-            return false;
+        if(Objects.equals(this.tramo, other.tramo) && Objects.equals(this.dia, other.dia)){
+            return true;
         }
-        return true;
+        return false;
     }
 
     
