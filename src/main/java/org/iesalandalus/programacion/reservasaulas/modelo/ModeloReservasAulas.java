@@ -50,12 +50,10 @@ public class ModeloReservasAulas implements IModeloReservasAulas {
         return aulas.buscar(buscar);
     }
     
-    public void insertarAula(Aula insertar) {
-        try {
+    public void insertarAula(Aula insertar) throws OperationNotSupportedException  {
+        
             aulas.insertar(insertar);
-        } catch (OperationNotSupportedException ex) {
-            Logger.getLogger(ModeloReservasAulas.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
     }
     
     public void borrarAula(Aula borrar) {

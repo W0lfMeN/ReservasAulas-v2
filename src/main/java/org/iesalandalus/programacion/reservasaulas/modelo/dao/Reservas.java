@@ -24,6 +24,7 @@ import java.util.List;
 public class Reservas {
     private List<Reserva> coleccionReservas;
     private static final float MAX_PUNTOS_PROFESOR_MES= 200;
+    private static final String NOMBRE_FICHERO_RESERVAS="/ficheros/reservas.dat";
     
     public Reservas(){ //construcctor
         coleccionReservas= new ArrayList<Reserva>(); 
@@ -59,19 +60,17 @@ public class Reservas {
         return copia;
     }
     
-    public void insertar(Reserva reserva) throws OperationNotSupportedException {
+    public void insertar(Reserva reserva) throws OperationNotSupportedException, IllegalArgumentException {
         if(reserva==null){
             throw new IllegalArgumentException("No se puede realizar una reserva nula.");
-        }        
-        if(this.coleccionReservas.contains(reserva)){
-            throw new OperationNotSupportedException("La reserva ya existe.");
         }
         //valida si es por tramo o por hora con el uso de instanceof
-        if(reserva!=null){
-            if(reserva.getPermanencia()instanceof PermanenciaPorHora && reserva.getPermanencia() instanceof PermanenciaPorTramo){
+        Reserva diaActual= getReservaDia(reserva.getPermanencia().getDia());
+        if(diaActual!=null){
+            if(diaActual.getPermanencia()instanceof PermanenciaPorHora && reserva.getPermanencia() instanceof PermanenciaPorTramo){
                 throw new OperationNotSupportedException("Ya se ha realizado una reserva por hora para este día y aula.");
             }
-            if(getReservaDia(reserva.getPermanencia().getDia()).getPermanencia()instanceof PermanenciaPorTramo && reserva.getPermanencia()instanceof PermanenciaPorHora){
+            if(diaActual.getPermanencia()instanceof PermanenciaPorTramo && reserva.getPermanencia()instanceof PermanenciaPorHora){
                 throw new OperationNotSupportedException("Ya se ha realizado una reserva por tramo para este día y aula.");
             }
         }
@@ -85,42 +84,62 @@ public class Reservas {
         for(Reserva r: reservasProfesor){
             float name = puntosDelProfesor + r.getPuntos();
         }
-        if(getPuntosGastadosReserva(reserva)>(MAX_PUNTOS_PROFESOR_MES - puntosDelProfesor)){
+        if(getPuntosGastadosReserva(reserva)> (MAX_PUNTOS_PROFESOR_MES - puntosDelProfesor)){
             throw new OperationNotSupportedException("Esta reserva excede los puntos máximos por mes para dicho profesor.");
         }
+        
+        if(this.coleccionReservas.contains(reserva)){
+            throw new OperationNotSupportedException("La reserva ya existe.");
+        }else{
         //tras todas las comprobaciones
-        this.coleccionReservas.add(reserva);
+        this.coleccionReservas.add(new Reserva(reserva));
+        }
     }
     
     private boolean esMesSiguienteOPorsterior (Reserva laReserva){
         if(laReserva==null){
-            throw new IllegalArgumentException("Sólo se pueden hacer reservas para el mes que viene o posteriores.");
+            throw new IllegalArgumentException("La reserva no puede ser nula.");
         }
         LocalDate fecha= LocalDate.now().plusMonths(1);
-        if(laReserva.getPermanencia().getDia().isBefore(fecha)){
+        if(laReserva.getPermanencia().getDia().isBefore(LocalDate.of(fecha.getYear(), fecha.getMonth(), 1))){
             return false;
         }
         return true;
     }
     
-    private float getPuntosGastadosReserva(Reserva reserva){
-        if(reserva==null){
-            throw new IllegalArgumentException("Esta reserva excede los puntos máximos por mes para dicho profesor.");
+    private float getPuntosGastadosReserva(Reserva laReserva){
+        float puntos=0;
+        if(laReserva==null){
+            throw new IllegalArgumentException("La reserva no puede ser nula.");
         }
-        return reserva.getPuntos();
+        List<Reserva> reservas= getReservasProfesorMes(laReserva.getProfesor(), laReserva.getPermanencia().getDia());
+        for(Reserva r: reservas){
+            puntos=r.getPuntos();
+        }
+        return puntos+ laReserva.getPuntos();
     }
     
-    private List<Reserva> getReservasProfesorMes(Profesor elProfesor, LocalDate dia){
+    private List<Reserva> getReservasProfesorMes(Profesor elProfesor, LocalDate mes){
+        if(elProfesor==null){
+            throw new IllegalArgumentException("El profesor no puede ser nulo.");
+        }
+        if(mes==null){
+            throw new IllegalArgumentException("El día no puede ser nulo");
+        }
         List<Reserva> devolver= new ArrayList<Reserva>();
         for(Reserva reserva: coleccionReservas){
-            if(reserva.getProfesor().equals(elProfesor)&& reserva.getPermanencia().getDia().getMonthValue()==dia.getMonthValue()){
-                devolver.add(reserva);
+            if(reserva.getProfesor().equals(elProfesor)&& reserva.getPermanencia().getDia().getMonthValue()==mes.getMonthValue()
+                    && reserva.getPermanencia().getDia().getYear()==mes.getYear()){
+                devolver.add(new Reserva(reserva));
             }
         }
         return devolver;
     }
     
     private Reserva getReservaDia(LocalDate dia){
+        if(dia==null){
+            throw new IllegalArgumentException("El día no puede ser nulo.");
+        }
         for(Reserva reserva: coleccionReservas){
             if(reserva.getPermanencia().getDia().equals(dia)){
                 return new Reserva(reserva);
@@ -211,6 +230,5 @@ public class Reservas {
         }
         return true;
     }
-    
 }
 

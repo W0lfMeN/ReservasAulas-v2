@@ -6,6 +6,7 @@
 package org.iesalandalus.programacion.reservasaulas.controlador;
 
 import java.util.List;
+import javax.naming.OperationNotSupportedException;
 import org.iesalandalus.programacion.reservasaulas.modelo.dominio.Aula;
 import org.iesalandalus.programacion.reservasaulas.modelo.dominio.Profesor;
 import org.iesalandalus.programacion.reservasaulas.modelo.dominio.Reserva;
@@ -20,7 +21,7 @@ public interface IControladorReservasAulas {
     
     public void salir();
     
-    public void insertarAula(Aula aula);
+    public void insertarAula(Aula aula) throws OperationNotSupportedException;
     
     public void borrarAula(Aula aula);
     

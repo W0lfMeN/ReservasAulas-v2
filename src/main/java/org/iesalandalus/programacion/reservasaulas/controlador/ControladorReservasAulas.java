@@ -6,6 +6,7 @@
 package org.iesalandalus.programacion.reservasaulas.controlador;
 
 import java.util.List;
+import javax.naming.OperationNotSupportedException;
 import org.iesalandalus.programacion.reservasaulas.modelo.IModeloReservasAulas;
 import org.iesalandalus.programacion.reservasaulas.modelo.dominio.Aula;
 import org.iesalandalus.programacion.reservasaulas.modelo.dominio.Profesor;
@@ -39,7 +40,7 @@ public class ControladorReservasAulas implements IControladorReservasAulas {
     }
 
     @Override
-    public void insertarAula(Aula aula) {
+    public void insertarAula(Aula aula) throws OperationNotSupportedException {
         modelo.insertarAula(aula);
     }
 

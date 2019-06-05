@@ -16,6 +16,8 @@ import org.iesalandalus.programacion.reservasaulas.vista.Consola;
 import javax.naming.OperationNotSupportedException;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.iesalandalus.programacion.reservasaulas.controlador.IControladorReservasAulas;
 /**
  *
@@ -55,8 +57,10 @@ public class VistaReservasAulas implements IVistaReservasAulas {
             Aula aula=Consola.leerAula();
             controlador.insertarAula(aula);
             System.out.println("Aula insertada");
-        }catch (IllegalArgumentException e){
+        }catch (NullPointerException |IllegalArgumentException  e){
             System.out.println(ERROR +e.getMessage());
+        } catch (OperationNotSupportedException ex) {
+            Logger.getLogger(VistaReservasAulas.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     @Override
@@ -66,7 +70,7 @@ public class VistaReservasAulas implements IVistaReservasAulas {
             Aula aula= Consola.leerAula();
             controlador.borrarAula(aula);
             System.out.println("Aula borrada");
-        }catch (IllegalArgumentException e){
+        }catch (NullPointerException |IllegalArgumentException e){
             System.out.println(ERROR + e.getMessage());
         }
     }
@@ -82,19 +86,21 @@ public class VistaReservasAulas implements IVistaReservasAulas {
             }else{
                 System.out.println("El aula buscada es: "+ aula);
             }
-        }catch(IllegalArgumentException e){
+        }catch(IllegalArgumentException |NullPointerException e){
             System.out.println(ERROR + e.getMessage());
         }
     }
     @Override
     public void listarAulas(){
-        Consola.mostrarCabecera("Listar aula");
-        List<String> aula= controlador.representarAulas();
-        if(aula.size()> 0){
-            for(String aulas : aula){
-                System.out.println(aulas);
-            }
-        }else{
+        Consola.mostrarCabecera("Listar aulas");
+        try{
+            List<String> aula= controlador.representarAulas();
+            if(aula.size()> 0){
+                for(String aulas : aula){
+                    System.out.println(aulas);
+               }
+            }           
+        }catch(NullPointerException e){
             System.out.println("No hay aulas");
         }
     }
@@ -105,7 +111,7 @@ public class VistaReservasAulas implements IVistaReservasAulas {
             Profesor profesor=Consola.leerProfesor();
             controlador.insertarProfesor(profesor);
             System.out.println("profesor insertado");
-        }catch (IllegalArgumentException e){
+        }catch (IllegalArgumentException |NullPointerException e){
             System.out.println(ERROR +e.getMessage());
         }
     }
@@ -116,7 +122,7 @@ public class VistaReservasAulas implements IVistaReservasAulas {
             Profesor profesor= new Profesor (Consola.leerNombreProfesor(), CORREO_VALIDO);
             controlador.borrarProfesor(profesor);
             System.out.println("profesor borrado");
-        }catch (IllegalArgumentException e){
+        }catch (IllegalArgumentException |NullPointerException e){
             System.out.println(ERROR + e.getMessage());
         }
     }
@@ -133,7 +139,7 @@ public class VistaReservasAulas implements IVistaReservasAulas {
             }else{
                 System.out.println("El profesor buscado es: "+ profesor);
             }
-        }catch(IllegalArgumentException e){
+        }catch(IllegalArgumentException | NullPointerException e){
             System.out.println(ERROR + e.getMessage());
         }
     }
@@ -141,12 +147,14 @@ public class VistaReservasAulas implements IVistaReservasAulas {
     @Override
     public void listarProfesores(){
         Consola.mostrarCabecera("Listar profesores");
-        List<String> profesor= controlador.representarProfesores();
-        if(profesor.size()> 0){
-            for(String profesores : profesor){
-                System.out.println(profesores);
+        try{
+            List<String> profesor= controlador.representarProfesores();
+            if(profesor.size()> 0){
+                for(String profesores : profesor){
+                    System.out.println(profesores);
+                }
             }
-        }else{
+        }catch(NullPointerException |IllegalArgumentException e){
             System.out.println("No hay profesores");
         }
     }
@@ -161,7 +169,7 @@ public class VistaReservasAulas implements IVistaReservasAulas {
             Reserva reserva= leerReserva(profesor);
             controlador.realizarReserva(reserva);
             System.out.println("Reserva realizada");
-        }catch(IllegalArgumentException e){
+        }catch(IllegalArgumentException | NullPointerException e){
             System.out.println(ERROR + e.getMessage());
         }
     }
@@ -177,19 +185,21 @@ public class VistaReservasAulas implements IVistaReservasAulas {
         try{
             controlador.anularReserva(reserva);
             System.out.println("Reserva anulada");
-        }catch(IllegalArgumentException e){
+        }catch(IllegalArgumentException |NullPointerException e){
             System.out.println(ERROR + e.getMessage());
         }
     }
     @Override
     public void listarReservas(){
         Consola.mostrarCabecera("Listar reservas");
-        List<String> reserva= controlador.representarReservas();
-        if(reserva.size()> 0){
-            for(String reservas : reserva){
-                System.out.println(reserva);
+        try{
+            List<String> reserva= controlador.representarReservas();
+            if(reserva.size()> 0){
+                for(String reservas : reserva){
+                    System.out.println(reserva);
+                }
             }
-        }else{
+        }catch(NullPointerException | IllegalArgumentException e){
             System.out.println("No hay reservas");
         }
     }
